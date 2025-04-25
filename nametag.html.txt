@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>名札生成</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px; }
+    #badge { border: 1px solid #000; width: 300px; height: 180px; margin: 0 auto; padding-top: 50px; }
+    #name { font-size: 24pt; font-weight: bold; }
+    #aff { font-size: 14pt; }
+    button { margin-top: 20px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>名札プレビュー</h1>
+  <div id="badge">
+    <div id="name">氏名</div>
+    <div id="aff">所属</div>
+  </div>
+  <button onclick="generatePDF()">PDFを作成</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') || '氏名未入力';
+    const aff = params.get('aff') || '所属未入力';
+
+    document.getElementById('name').textContent = name;
+    document.getElementById('aff').textContent = aff;
+
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [100, 60]
+      });
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(20);
+      doc.text(name, 10, 25);
+      doc.setFontSize(14);
+      doc.text(aff, 10, 40);
+
+      doc.save(`nametag_${name}.pdf`);
+    }
+  </script>
+</body>
+</html>
